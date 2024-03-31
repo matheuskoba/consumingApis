@@ -64,6 +64,11 @@ def list_user_availability_schedules(data):
     response = requests.get(url, headers=headers_calendly, json=data)
     return response.json()
 
+def create_one_off_event_types(data):
+    url = f'{base_url_airtable}/one_off_event_types'
+    response = requests.post(url, headers=headers_airtable, json=data)
+    return response.json()
+
 # Exemplos de uso das funções
 if __name__ == '__main__':
 
@@ -136,6 +141,7 @@ if __name__ == '__main__':
             print("1. Meu usuário")
             print("2. Horários Agendados")
             print("3. Horários disponíveis na agenda")
+            print("4. Criar uma reunião")
 
             choice = input("Digite o número da opção desejada: ")
 
@@ -153,11 +159,38 @@ if __name__ == '__main__':
                     }
                     print(user_busy_time(data))
                 case "3":
-                    user = input("Informe o ID do usário: ")
+                    user = input("Informe o ID do usuário: ")
                     data = {
                         "user": user
                     }
                     print(f"\nCarregando as datas disponíveis: ")
                     print(list_user_availability_schedules(data))
+                case "4":
+                    user = input("Informe o ID do usuário: ")
+                    name = input("Informe o nome da reunião: ")
+                    duration = input("Informe a duração da reunião (in minutes): ")
+                    start_time = "2020-01-02T11:30:00.000000Z"
+                    end_time = "2020-01-03T11:30:00.000000Z"
+
+                    data = {
+                        "name": name,
+                        "host": user,
+                        "co_host": [""],
+                        "duration": duration,
+                        "timezone": "string",
+                        "date_setting": {
+                            "type": "spots",
+                            "spots": {
+                                "start_time": start_time,
+                                "end_time": end_time
+                            }
+                        },
+                        "location": {
+                            "kind": "physical",
+                            "location": "Main office",
+                            "additonal_info": "string"
+                        }
+                    }
+                    print(create_one_off_event_types(data))
                 case _:
                     print("Opção inválida. Por favor, escolha uma opção válida.")
